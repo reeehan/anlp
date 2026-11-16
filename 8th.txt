@@ -1,0 +1,71 @@
+
+import nltk
+
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.util import ngrams
+from collections import Counter
+
+# Download required resources
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('wordnet')
+
+# Sample text
+text = "The students are studying and the students are playing."
+
+# Tokenization
+tokens = word_tokenize(text.lower())
+
+print("Original Tokens:")
+print(tokens)
+
+# a) Morphological Analysis
+lemmatizer = WordNetLemmatizer()
+
+print("\nMorphological Analysis:")
+
+for word in tokens:
+    lemma = lemmatizer.lemmatize(word)
+    print(word, "->", lemma)
+
+# b) Generate N-Grams
+
+# Unigrams
+unigrams = list(ngrams(tokens, 1))
+
+print("\nUnigrams:")
+print(unigrams)
+
+# Bigrams
+bigrams = list(ngrams(tokens, 2))
+
+print("\nBigrams:")
+print(bigrams)
+
+# Trigrams
+trigrams = list(ngrams(tokens, 3))
+
+print("\nTrigrams:")
+print(trigrams)
+
+# c) N-Gram Smoothing using Laplace Smoothing
+
+bigram_counts = Counter(bigrams)
+unigram_counts = Counter(tokens)
+
+vocabulary = set(tokens)
+V = len(vocabulary)
+
+print("\nBigram Probabilities with Laplace Smoothing:")
+
+for bigram in bigrams:
+    word1, word2 = bigram
+
+    probability = (
+        bigram_counts[bigram] + 1
+    ) / (
+        unigram_counts[word1] + V
+    )
+
+    print(bigram, ":", probability)

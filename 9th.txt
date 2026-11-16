@@ -1,0 +1,88 @@
+
+import nltk
+import matplotlib.pyplot as plt
+
+from gensim.models import Word2Vec
+from nltk.tokenize import word_tokenize
+from sklearn.decomposition import PCA
+
+# Download tokenizer
+nltk.download('punkt')
+nltk.download('punkt_tab')
+
+# Sample dataset
+sentences = [
+    "machine learning is a part of artificial intelligence",
+    "deep learning is a part of machine learning",
+    "artificial intelligence makes machines intelligent",
+    "natural language processing helps computers understand language",
+    "word embedding represents words as vectors",
+    "word2vec is used for word embedding",
+    "machine learning and deep learning are useful"
+]
+
+# Tokenization
+tokenized_sentences = [
+    word_tokenize(sentence.lower())
+    for sentence in sentences
+]
+
+print("Tokenized Sentences:")
+print(tokenized_sentences)
+
+# Train Word2Vec model
+model = Word2Vec(
+    sentences=tokenized_sentences,
+    vector_size=50,
+    window=3,
+    min_count=1,
+    workers=4,
+    sg=1,
+    epochs=100
+)
+
+# Display word vector
+word = "machine"
+
+print("\nWord Vector for", word)
+print(model.wv[word])
+
+# Find similar words
+print("\nSimilar Words:")
+print(model.wv.most_similar("machine", topn=3))
+
+# Check similarity between two words
+similarity = model.wv.similarity("machine", "learning")
+
+print("\nSimilarity Score:")
+print(similarity)
+
+# Visualize word embeddings using PCA
+words = list(model.wv.index_to_key)
+
+vectors = [
+    model.wv[word]
+    for word in words
+]
+
+pca = PCA(n_components=2)
+reduced_vectors = pca.fit_transform(vectors)
+
+plt.figure(figsize=(10, 7))
+
+plt.scatter(
+    reduced_vectors[:, 0],
+    reduced_vectors[:, 1]
+)
+
+for i, word in enumerate(words):
+    plt.annotate(
+        word,
+        (reduced_vectors[i, 0], reduced_vectors[i, 1])
+    )
+
+plt.title("Word2Vec Word Embeddings")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.grid()
+plt.show()

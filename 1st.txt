@@ -1,0 +1,52 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create dataset
+data = {
+    'Marks': [48, 55, 61, 72, 75, 63, 81, 57, 69, 74,
+              77, 52, 66, 71, 83, 59, 64, 70, 76, 48]
+}
+
+df = pd.DataFrame(data)
+
+# Display dataset
+print("Dataset:")
+print(df)
+
+# Statistical analysis
+print("\nStatistical Analysis:")
+print(df.describe())
+
+# 1. Histogram
+plt.figure(figsize=(7, 4))
+plt.hist(df['Marks'], bins=5, edgecolor='black')
+plt.title('Marks Distribution')
+plt.xlabel('Marks')
+plt.ylabel('Frequency')
+plt.show()
+
+# 2. Box Plot
+plt.figure(figsize=(7, 4))
+sns.boxplot(x=df['Marks'])
+plt.title('Box Plot of Marks')
+plt.xlabel('Marks')
+plt.show()
+
+# 3. Scatter Plot
+plt.figure(figsize=(7, 4))
+plt.scatter(range(len(df)), df['Marks'])
+plt.title('Scatter Plot')
+plt.xlabel('Student Number')
+plt.ylabel('Marks')
+plt.show()
+
+# 4. Bar Chart
+plt.figure(figsize=(7, 4))
+plt.bar(range(len(df)), df['Marks'])
+plt.title('Student Marks')
+plt.xlabel('Student Number')
+plt.ylabel('Marks')
+plt.show()

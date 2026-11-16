@@ -1,0 +1,127 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam, RMSprop
+
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Generate dataset
+X, y = make_classification(
+    n_samples=1000,
+    n_features=10,
+    n_classes=2,
+    random_state=42
+)
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Standardize data
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create model function
+def create_model():
+    model = Sequential([
+        Dense(32, activation='relu', input_shape=(10,)),
+        Dense(16, activation='relu'),
+        Dense(1, activation='sigmoid')
+    ])
+    return model
+
+# Adam Optimizer
+adam_model = create_model()
+
+adam_model.compile(
+    optimizer=Adam(learning_rate=0.001),
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+adam_history = adam_model.fit(
+    X_train, y_train,
+    epochs=20,
+    batch_size=32,
+    validation_data=(X_test, y_test),
+    verbose=0
+)
+
+# RMSprop Optimizer
+rms_model = create_model()
+
+rms_model.compile(
+    optimizer=RMSprop(learning_rate=0.001),
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+rms_history = rms_model.fit(
+    X_train, y_train,
+    epochs=20,
+    batch_size=32,
+    validation_data=(X_test, y_test),
+    verbose=0
+)
+
+# Evaluate models
+adam_loss, adam_accuracy = adam_model.evaluate(
+    X_test, y_test, verbose=0
+)
+
+rms_loss, rms_accuracy = rms_model.evaluate(
+    X_test, y_test, verbose=0
+)
+
+print("Adam Accuracy:", adam_accuracy)
+print("RMSprop Accuracy:", rms_accuracy)
+
+print("Adam Loss:", adam_loss)
+print("RMSprop Loss:", rms_loss)
+
+# Compare accuracy
+plt.figure(figsize=(8, 5))
+
+plt.plot(
+    adam_history.history['accuracy'],
+    label='Adam'
+)
+
+plt.plot(
+    rms_history.history['accuracy'],
+    label='RMSprop'
+)
+
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Adam vs RMSprop Optimizers')
+plt.legend()
+plt.show()
+
+# Compare loss
+plt.figure(figsize=(8, 5))
+
+plt.plot(
+    adam_history.history['loss'],
+    label='Adam'
+)
+
+plt.plot(
+    rms_history.history['loss'],
+    label='RMSprop'
+)
+
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.title('Loss Comparison')
+plt.legend()
+plt.show()
